@@ -7,3 +7,9 @@ Key Features:
 - Drowsiness detection using advanced algorithms
 - Lightweight and efficient, thanks to Google ML Kit
 - Alerts the driver before it's too late!
+
+
+### Video Demo
+
+https://github.com/user-attachments/assets/a70a5c02-c189-4e0f-9893-e082ac49846a
+
