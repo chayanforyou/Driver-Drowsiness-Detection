@@ -1,7 +1,10 @@
 package io.github.chayanforyou.drowsinessdetection
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -27,6 +30,13 @@ class MainActivity : AppCompatActivity() {
     private var imageProcessor: VisionImageProcessor? = null
     private var needUpdateOverlayInfo = false
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                bindAllCameraUseCases()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,13 +51,15 @@ class MainActivity : AppCompatActivity() {
             .processCameraProvider
             .observe(this) { provider: ProcessCameraProvider? ->
                 cameraProvider = provider
-                bindAllCameraUseCases()
+                checkCameraPermissionAndBind()
             }
     }
 
     override fun onResume() {
         super.onResume()
-        bindAllCameraUseCases()
+        if (isPermissionGranted()) {
+            bindAllCameraUseCases()
+        }
     }
 
     override fun onPause() {
@@ -58,6 +70,18 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
+    }
+
+    private fun isPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkCameraPermissionAndBind() {
+        if (isPermissionGranted()) {
+            bindAllCameraUseCases()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     private fun bindAllCameraUseCases() {

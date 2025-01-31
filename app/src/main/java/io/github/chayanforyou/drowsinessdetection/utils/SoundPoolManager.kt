@@ -35,6 +35,13 @@ class SoundPoolManager private constructor(context: Context) {
     }
 
     /**
+     * Stop the SoundPool resources.
+     */
+    fun stop() {
+        soundPool.stop(soundId)
+    }
+
+    /**
      * Release the SoundPool resources.
      */
     fun release() {
@@ -52,7 +59,7 @@ class SoundPoolManager private constructor(context: Context) {
          */
         fun getInstance(context: Context): SoundPoolManager {
             return instance ?: synchronized(this) {
-                instance ?: SoundPoolManager(context.applicationContext).also { instance = it }
+                instance ?: SoundPoolManager(context).also { instance = it }
             }
         }
     }

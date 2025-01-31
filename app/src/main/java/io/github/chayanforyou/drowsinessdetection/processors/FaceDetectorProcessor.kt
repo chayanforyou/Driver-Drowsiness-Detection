@@ -37,7 +37,7 @@ class FaceDetectorProcessor(context: Context, detectorOptions: FaceDetectorOptio
   override fun stop() {
     super.stop()
     detector.close()
-    soundManager.release()
+    soundManager.stop()
   }
 
   override fun detectInImage(image: InputImage): Task<List<Face>> {
